@@ -40,9 +40,9 @@ from collections import defaultdict
 import cv2
 import PIL.Image as pil_img
 
-from optimizers import optim_factory
+from smplifyx.optimizers import optim_factory
 
-import fitting
+import smplifyx.fitting as fitting
 from human_body_prior.tools.model_loader import load_vposer
 
 
@@ -193,7 +193,7 @@ def fit_single_frame(img,
         body_mean_pose = torch.zeros([batch_size, vposer_latent_dim],
                                      dtype=dtype)
     else:
-        body_mean_pose = body_pose_prior.get_mean().detach().cpu()
+        body_mean_pose = body_pose_prior.get_mean().detach().cpu()[:, :]
 
     keypoint_data = torch.tensor(keypoints, dtype=dtype)
     gt_joints = keypoint_data[:, :, :2]
@@ -272,7 +272,6 @@ def fit_single_frame(img,
                                 pose_embedding=pose_embedding,
                                 model_type=kwargs.get('model_type', 'smpl'),
                                 focal_length=focal_length, dtype=dtype)
-
     camera_loss = fitting.create_loss('camera_init',
                                       trans_estimation=init_t,
                                       init_joints_idxs=init_joints_idxs,

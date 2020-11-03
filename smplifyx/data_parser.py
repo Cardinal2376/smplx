@@ -34,7 +34,7 @@ import torch
 from torch.utils.data import Dataset
 
 
-from utils import smpl_to_openpose
+from smplifyx.utils import smpl_to_openpose
 
 Keypoints = namedtuple('Keypoints',
                        ['keypoints', 'gender_gt', 'gender_pd'])
@@ -93,7 +93,7 @@ def read_keypoints(keypoint_fn, use_hands=True, use_face=True,
             gender_pd.append(person_data['gender_pd'])
         if 'gender_gt' in person_data:
             gender_gt.append(person_data['gender_gt'])
-
+        print("body_keypoints", body_keypoints.shape)
         keypoints.append(body_keypoints)
 
     return Keypoints(keypoints=keypoints, gender_pd=gender_pd,

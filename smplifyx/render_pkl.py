@@ -23,10 +23,10 @@ import pickle
 import torch
 import smplx
 
-from cmd_parser import parse_config
+from smplifyx.cmd_parser import parse_config
 from human_body_prior.tools.model_loader import load_vposer
 
-from utils import JointMapper
+from smplifyx.utils import JointMapper
 import pyrender
 import trimesh
 

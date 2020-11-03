@@ -302,6 +302,7 @@ class LBFGS(Optimizer):
         n_iter = 0
         # optimize for a max of max_iter iterations
         while n_iter < max_iter:
+            # print("lbfgs {} {}".format(n_iter, max_iter))
             # keep track of nb of iterations
             n_iter += 1
             state['n_iter'] += 1

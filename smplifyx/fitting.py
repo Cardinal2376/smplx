@@ -29,8 +29,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from mesh_viewer import MeshViewer
-import utils
+from smplifyx.mesh_viewer import MeshViewer
+import smplifyx.utils as utils
 
 
 @torch.no_grad()
@@ -70,7 +70,6 @@ def guess_init(model,
             The vector with the estimated camera location
 
     '''
-
     body_pose = vposer.decode(
         pose_embedding, output_type='aa').view(1, -1) if use_vposer else None
     if use_vposer and model_type == 'smpl':
@@ -172,6 +171,7 @@ class FittingMonitor(object):
         append_wrists = self.model_type == 'smpl' and use_vposer
         prev_loss = None
         for n in range(self.maxiters):
+            print("n = ", n)
             loss = optimizer.step(closure)
 
             if torch.isnan(loss).sum() > 0:
@@ -184,8 +184,8 @@ class FittingMonitor(object):
 
             if n > 0 and prev_loss is not None and self.ftol > 0:
                 loss_rel_change = utils.rel_change(prev_loss, loss.item())
-
                 if loss_rel_change <= self.ftol:
+                    print("loss_rel_change <= self.ftol", loss_rel_change, self.ftol)
                     break
 
             if all([torch.abs(var.grad.view(-1).max()).item() < self.gtol
@@ -232,7 +232,7 @@ class FittingMonitor(object):
 
             body_pose = vposer.decode(
                 pose_embedding, output_type='aa').view(
-                    1, -1) if use_vposer else None
+                    1, -1) if use_vposer else body_model.body_pose
 
             if append_wrists:
                 wrist_pose = torch.zeros([body_pose.shape[0], 6],
@@ -257,6 +257,7 @@ class FittingMonitor(object):
 
             self.steps += 1
             if self.visualize and self.steps % self.summary_steps == 0:
+                print("body_pose", body_pose[0][:10])
                 model_output = body_model(return_verts=True,
                                           body_pose=body_pose)
                 vertices = model_output.vertices.detach().cpu().numpy()
@@ -386,7 +387,7 @@ class SMPLifyLoss(nn.Module):
             pprior_loss = torch.sum(self.body_pose_prior(
                 body_model_output.body_pose,
                 body_model_output.betas)) * self.body_pose_weight ** 2
-
+        print("pprior_loss", pprior_loss)
         shape_loss = torch.sum(self.shape_prior(
             body_model_output.betas)) * self.shape_weight ** 2
         # Calculate the prior over the joint rotations. This a heuristic used
@@ -458,7 +459,6 @@ class SMPLifyCameraInitLoss(nn.Module):
                  **kwargs):
         super(SMPLifyCameraInitLoss, self).__init__()
         self.dtype = dtype
-
         if trans_estimation is not None:
             self.register_buffer(
                 'trans_estimation',

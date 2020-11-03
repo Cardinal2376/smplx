@@ -30,13 +30,13 @@ import torch
 
 import smplx
 
-from utils import JointMapper
-from cmd_parser import parse_config
-from data_parser import create_dataset
-from fit_single_frame import fit_single_frame
+from smplifyx.utils import JointMapper
+from smplifyx.cmd_parser import parse_config
+from smplifyx.data_parser import create_dataset
+from smplifyx.fit_single_frame import fit_single_frame
 
-from camera import create_camera
-from prior import create_prior
+from smplifyx.camera import create_camera
+from smplifyx.prior import create_prior
 
 torch.backends.cudnn.enabled = False
 

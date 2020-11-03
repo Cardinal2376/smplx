@@ -26,7 +26,7 @@ import argparse
 
 import time
 import trimesh
-from mesh_viewer import MeshViewer
+from smplifyx.mesh_viewer import MeshViewer
 
 
 class KeyHandler(object):
